@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo Moderno do São Paulo FC</title>
+    <style>
+        body {
+              margin: 0;
+      padding: 0;
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjzn7CQ3qFkGjkFS7PBbm2WOxoZDDcDbwQPA&s'); /* substitua pelo caminho da sua imagem */
+      background-size: cover; /* cobre toda a tela */
+      background-position: center; /* centraliza a imagem */
+      background-repeat: no-repeat; /* não repete a imagem */
+      font-family: Arial, sans-serif;
+      color: white; /* ajusta a cor do texto para contraste */
+    }
+
+    .quiz-container {
+      background-color: rgba(0, 0, 0, 0.6); /* fundo escuro com transparência */
+      padding: 20px;
+      margin: 50px auto;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 10px;
+    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #282c34;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 60px; /* Added spacing at the top */
+        }
+        header {
+            background: #2e3440;
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        header h1 {
+            font-size: 1.5em;
+            margin: 0;
+            color: #eceff4;
+        }
+        .quiz-container {
+            background: #141414;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(240, 30, 30, 0.5);
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        input[type=text], input[type=number], select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px;
+            border-radius: 4px;
+            border: none;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #81a1c1;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #5e81ac;
+        }
+        .resultado {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #f7532a;
+        }
+        .pergunta {
+            margin-bottom: 20px;
+        }
+        .pergunta label {
+            display: block;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .pergunta input[type=radio] {
+            margin-right: 10px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(26, 25, 25, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: #f53e3e;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .modal-content input[type=text], .modal-content input[type=number] {
+            margin-bottom: 15px;
+        }
+        .modal-content button {
+            width: auto;
+            padding: 10px 20px;
+        }
+        .error {
+            color: #bf616a;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <h1>🏁 Quiz Interativo São Paulo FC - Orgulho Tricolor 🟥⬜⬛</h1>
+</body>
+</html>
+
+    </header>
+    <div class="quiz-container">
+        <h2>Quiz de Conhecimentos Gerais</h2>
+        <div id="quiz"></div>
+        <button onclick="verificarRespostas()">Enviar Respostas</button>
+        <button onclick="verRanking()">Ver Ranking</button>
+        <div id="resultado" class="resultado"></div>
+    </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">Vamos ver se voce acerta as perguntas sobre o time do São Paulo!</h3>
+            <input type="text" id="nomeUsuario" placeholder="Digite seu nome" required>
+            <input type="number" id="idadeUsuario" placeholder="Digite sua idade" min="10" required>
+            <div id="errorMessage" class="error"></div>
+            <button onclick="salvarUsuario()">Iniciar Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        let ranking = JSON.parse(localStorage.getItem('quizRanking')) || [];
+        let nomeUsuario = '';
+        let idadeUsuario = '';
+
+        window.onload = function() {
+            document.getElementById('userModal').style.display = 'flex';
+        };
+
+        const perguntas = [
+            { pergunta: "Em que ano foi fundado o São Paulo?", opcoes: ["1925", "1930", "1915"], resposta: "1930" },
+            { pergunta: "Com qual time contra o São Paulo foi tricampeão Mundial?", opcoes: ["PSG", "Córeia do Sul", "Liverpool"], resposta: "Liverpool" },
+            { pergunta: "Qual Técnico substituido conduziu o São Paulo em 2002'?", opcoes: ["Oswaldo de Oliveira", "Emerson Leão", "Carlos Alberto Parreira"], resposta: "Oswaldo de Oliveira" },
+            { pergunta: "Atualmente, o São Paulo está em que posição na tabela do brasileirão?", opcoes: ["14", "12", "10"], resposta: "14" },
+            { pergunta: "Qual jogador marcou na Copa do Brasil na final, o ultimo gol, contra o Flamengo em 2023, no Morumbi?", opcoes: ["Welington Rato", "Rafinha", "Rodrigo Nestor"], resposta: "Rodrigo Nestor" },
+            { pergunta: "Quem é o novo Técnico do São Paulo atualmente em 2025 ?", opcoes: ["Luís Zubeldía", "Hernán Crespo", "Eduardo Coudet"], resposta: "Hernán Crespo" }
+        ];
+
+        const quizContainer = document.getElementById('quiz');
+
+        perguntas.forEach((q, index) => {
+            let opcoesHtml = q.opcoes.map(opcao =>
+                `<label><input type="radio" name="pergunta${index}" value="${opcao}"> ${opcao}</label>`
+            ).join('');
+
+            quizContainer.innerHTML += `
+                <div class="pergunta">
+                    <p>${index + 1}. ${q.pergunta}</p>
+                    ${opcoesHtml}
+                </div>
+            `;
+        });
+
+        function salvarUsuario() {
+            nomeUsuario = document.getElementById('nomeUsuario').value.trim();
+            idadeUsuario = document.getElementById('idadeUsuario').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (!nomeUsuario || !idadeUsuario || isNaN(idadeUsuario) || idadeUsuario <= 0) {
+                errorMessage.innerHTML = 'Por favor, preencha nome e idade válidos!';
+                return;
+            }
+
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        function verificarRespostas() {
+            if (!nomeUsuario || !idadeUsuario) {
+                document.getElementById('userModal').style.display = 'flex';
+                document.getElementById('errorMessage').innerHTML = 'Por favor, preencha seus dados antes de enviar!';
+                return;
+            }
+
+            let corretas = 0;
+
+            perguntas.forEach((q, index) => {
+                const respostaUsuario = document.querySelector(`input[name="pergunta${index}"]:checked`);
+                if (respostaUsuario && respostaUsuario.value === q.resposta) {
+                    corretas++;
+                }
+            });
+
+            ranking.push({ nome: nomeUsuario, idade: idadeUsuario, corretas });
+            localStorage.setItem('quizRanking', JSON.stringify(ranking));
+
+            document.getElementById('resultado').innerHTML = `${nomeUsuario}, você acertou ${corretas} de ${perguntas.length} perguntas!`;
+        }
+
+        function verRanking() {
+            let rankingHtml = ranking.sort((a, b) => b.corretas - a.corretas).map((item, index) =>
+                `<p>${index + 1}. ${item.nome} (Idade: ${item.idade}) - ${item.corretas} acertos</p>`
+            ).join('');
+
+            document.getElementById('resultado').innerHTML = `<h3>Ranking</h3>${rankingHtml || 'Nenhum resultado no ranking!'}`;
+        }
+    </script>
+</body>
+</html>
